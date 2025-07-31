@@ -1,26 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --bgSoft: #000000;     /* Pure black background */
+  --btn: #ff6c03;        /* Orange accent color */
+  --text: #ffffff;       /* Default white text */
+  --hover: #ff832b; 
+  --bg: #000000;
+  --text: #ffffff;
+  --accent: #ff6c03;     /* Optional lighter orange for hover */
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bgSoft);
+  color: var(--text);
 }
+
