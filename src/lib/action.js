@@ -8,26 +8,36 @@ import { connectToDb } from "./utlis";
 import { signIn, signOut } from "./auth";
 import bcrypt from "bcrypt";
 
-export const addPost = async ( formData) => {
+export const addPost = async (formData) => {
   const { title, desc, slug, userId, img } = Object.fromEntries(formData);
-  //   console.log(title,desc,slug,userId);
 
   try {
-    connectToDb();
+    await connectToDb();
+
+    // ✅ Fetch user by ID to get username
+    const user = await User.findById(userId);
+    if (!user) {
+      console.log("User not found");
+      return;
+    }
+
+    // ✅ Create post with author name
     const newPost = new Post({
       title,
       desc,
       slug,
       userId,
       img,
+      author: user.username, // ✅ Save author's username
     });
 
     await newPost.save();
-    console.log("save to db");
+    console.log("Saved to DB");
+
     revalidatePath("/blog");
     revalidatePath("/admin");
   } catch (err) {
-    console.log(err);
+    console.log("Error saving post:", err);
   }
 };
 export const deletePost = async (formData) => {

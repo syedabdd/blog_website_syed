@@ -27,14 +27,14 @@ export const getPost = async (slug) => {
 
 
 export const getUser = async (id) => {
- try{
-  connectToDb()
-  const user = await User.findById({id})
-  return user;
- }catch(err){
-  console.log(err);
-  
- }
+  try {
+    await connectToDb();
+    const user = await User.findById(id); // ✅ Correct usage
+    return user;
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    return null;
+  }
 };
 export const getUsers = async () => {
  try{

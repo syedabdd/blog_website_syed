@@ -32,7 +32,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br  px-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br px-4">
       <div className="bg-white shadow-2xl rounded-2xl p-8 max-w-md w-full text-center">
         <h1 className="text-3xl font-bold mb-6 text-gray-800">
           {isLoggedIn ? `Welcome, ${session?.user?.name}` : 'Welcome Back'}
@@ -102,6 +102,17 @@ const LoginPage = () => {
                 Login with Credentials
               </button>
             </form>
+
+            {/* Register Button */}
+            <p className="text-sm text-gray-600 mt-6">
+              Don&apos;t have an account?{' '}
+              <button
+                onClick={() => router.push('/register')}
+                className="text-[#ff6c03] hover:text-black font-semibold underline transition duration-200 cursor-pointer"
+              >
+                Register here
+              </button>
+            </p>
           </>
         )}
       </div>

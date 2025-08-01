@@ -1,3 +1,5 @@
+// src/lib/models.js
+
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
@@ -28,26 +30,12 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const postSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-  },
-  desc: {
-    type: String,
-    required: true,
-  },
-  img: {
-    type: String,
-  },
-  userId: {
-    type: String,
-    required: false,
-  },
-  slug: {
-    type: String,
-    required: true,
-    unique: true,
-  },
+  title: { type: String, required: true },
+  desc: { type: String, required: true },
+  img: { type: String },
+  userId: { type: String },
+  author: { type: String, required: true },
+  slug: { type: String, required: true, unique: true },
 }, { timestamps: true });
 
 export const User = mongoose.models?.User || mongoose.model("User", userSchema);

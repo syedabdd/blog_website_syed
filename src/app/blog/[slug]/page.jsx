@@ -19,30 +19,18 @@ export default async function SinglePostPage({ params }) {
 
   if (!post) {
     return (
-      <div className="text-white text-center py-20 text-xl">Post not found</div>
+      <div className="text-white text-center py-20 text-xl">
+        Post not found
+      </div>
     );
   }
 
   return (
     <section className="bg-black text-white px-6 py-20 min-h-screen">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-14 items-start">
-
-        {/* Left: Featured Image */}
-        {post.img && (
-          <div className="overflow-hidden rounded-xl shadow-xl border border-[#ff6c03]/20 group">
-            <Image
-              src={post.img}
-              alt={post.title}
-              width={700}
-              height={500}
-              className="w-full h-full object-cover rounded-xl transform group-hover:scale-105 transition duration-500"
-              priority
-            />
-          </div>
-        )}
-
-        {/* Right: Content */}
-        <div className="space-y-8">
+      <div className="max-w-7xl mx-auto flex flex-col-reverse lg:flex-row gap-16 items-start">
+        
+        {/* Right: Post Content */}
+        <div className="flex-1 space-y-10">
           {/* Title */}
           <h1 className="text-4xl md:text-5xl font-bold leading-tight text-white hover:text-[#ff6c03] transition-colors duration-300">
             {post.title}
@@ -71,13 +59,24 @@ export default async function SinglePostPage({ params }) {
           </div>
 
           {/* Description */}
-          <div className="text-gray-300 text-[1.05rem] leading-relaxed tracking-wide">
+          <div className="prose prose-invert max-w-none text-gray-300 text-[1.1rem] leading-relaxed tracking-wide">
             {post.desc}
           </div>
-
-          {/* CTA or Read More (optional) */}
-
         </div>
+
+        {/* Left: Featured Image */}
+        {post.img && (
+          <div className="flex-1 w-full max-h-[500px] overflow-hidden rounded-xl shadow-2xl border border-[#ff6c03]/20 group">
+            <Image
+              src={post.img}
+              alt={post.title}
+              width={700}
+              height={500}
+              className="w-full h-full object-cover rounded-xl transition-transform duration-500 group-hover:scale-105"
+              priority
+            />
+          </div>
+        )}
       </div>
     </section>
   );
