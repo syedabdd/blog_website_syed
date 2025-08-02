@@ -43,7 +43,6 @@ export default function Navbar() {
     }
   }
 
-  // Automatically stop loader after route change
   useEffect(() => {
     setLoading(false)
   }, [pathname])
@@ -118,11 +117,11 @@ export default function Navbar() {
         <AnimatePresence>
           {menuOpen && (
             <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="md:hidden mt-4 flex flex-col gap-3"
+              initial={{ scaleY: 0, opacity: 0 }}
+              animate={{ scaleY: 1, opacity: 1 }}
+              exit={{ scaleY: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="origin-top md:hidden mt-4 flex flex-col gap-3 bg-gradient-to-b from-black via-[#111] to-orange-600 px-4 py-3 rounded-lg shadow-lg"
             >
               {navLinks.map((link) => (
                 <button

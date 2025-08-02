@@ -5,30 +5,41 @@ import React, { useState } from 'react'
 
 function RegisterPage() {
   const [error, setError] = useState(null)
+  const [success, setSuccess] = useState(null)
 
-  const registerUser = async (formData) => {
+  const registerUser = async (e) => {
+    e.preventDefault()
+
+    const formData = new FormData(e.target)
+    const data = Object.fromEntries(formData)
+
     try {
-      const res = await register(formData)
-      if (res !== "success") {
+      const res = await register(data)
+      if (res !== 'success') {
         setError(res)
+        setSuccess(null)
       } else {
         setError(null)
-        alert("User registered successfully ✅")
-        // Optionally redirect to login
+        setSuccess('User registered successfully ✅')
+        e.target.reset() // Optional: clear the form
       }
     } catch (err) {
-      setError(err.message || "Something went wrong")
+      setError(err.message || 'Something went wrong')
+      setSuccess(null)
     }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black px-4">
       <form
-        action={registerUser}
+        onSubmit={registerUser}
         className="w-full max-w-md bg-[#111111] rounded-2xl shadow-2xl p-8 space-y-5 border border-orange-500"
       >
         <h2 className="text-2xl font-bold text-center text-orange-500">Create Account</h2>
 
+        {success && (
+          <p className="text-green-500 text-center text-sm font-medium">{success}</p>
+        )}
         {error && (
           <p className="text-red-500 text-center text-sm font-medium">{error}</p>
         )}

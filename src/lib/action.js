@@ -8,27 +8,26 @@ import { connectToDb } from "./utlis";
 import { signIn, signOut } from "./auth";
 import bcrypt from "bcrypt";
 
+// ------------------ ADD POST ------------------
 export const addPost = async (formData) => {
   const { title, desc, slug, userId, img } = Object.fromEntries(formData);
 
   try {
     await connectToDb();
 
-    // ✅ Fetch user by ID to get username
     const user = await User.findById(userId);
     if (!user) {
       console.log("User not found");
       return;
     }
 
-    // ✅ Create post with author name
     const newPost = new Post({
       title,
       desc,
       slug,
       userId,
       img,
-      author: user.username, // ✅ Save author's username
+      author: user.username,
     });
 
     await newPost.save();
@@ -40,21 +39,25 @@ export const addPost = async (formData) => {
     console.log("Error saving post:", err);
   }
 };
+
+// ------------------ DELETE POST ------------------
 export const deletePost = async (formData) => {
   const { id } = Object.fromEntries(formData);
 
   try {
-    connectToDb();
+    await connectToDb();
 
     await Post.findByIdAndDelete(id);
-    console.log("delete to db");
+    console.log("Deleted from DB");
+
     revalidatePath("/blog");
     revalidatePath("/admin");
   } catch (err) {
-    console.log(err);
+    console.log("Error deleting post:", err);
   }
 };
 
+// ------------------ LOGIN / LOGOUT ------------------
 export const handleLogin = async () => {
   "use server";
   await signIn("github");
@@ -65,72 +68,75 @@ export const handleLogout = async () => {
   await signOut();
 };
 
+// ------------------ REGISTER ------------------
 export const register = async (formData) => {
-  const { username, email, password, img, repassword } =
-    Object.fromEntries(formData);
+  const { username, email, password, img, repassword } = formData; // ✅ Already plain object
+
+  if (!username || !email || !password || !repassword) {
+    return "All fields are required";
+  }
 
   if (password !== repassword) {
     return "Passwords do not match";
   }
 
   try {
-    await connectToDb(); // ✅ Await DB connection
+    await connectToDb();
 
-    const existingUser = await User.findOne({ username }); // ✅ Await query
+    const existingUser = await User.findOne({ username });
     if (existingUser) {
       return "Username already exists";
     }
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = new User({
       username,
       email,
-      password: hashedPassword, // ⚠️ You should hash this before saving (use bcrypt)
+      password: hashedPassword,
       img,
     });
 
     await newUser.save();
-    console.log("Saved to DB ✅");
+    console.log("User saved to DB ✅");
 
-    return "success"; // return something so UI knows it's successful
+    return "success";
   } catch (err) {
     console.error("Register error:", err);
     return "Something went wrong during registration.";
   }
 };
 
+// ------------------ LOGIN WITH CREDENTIALS ------------------
 export const login = async (formData) => {
-  const { username, password } = Object.fromEntries(formData);
+  const { username, password } = formData;
 
   try {
     await signIn("credentials", { username, password });
   } catch (err) {
-    console.error("Register error:", err);
-    return "Something went wrong during registration.";
+    console.error("Login error:", err);
+    return "Invalid credentials or something went wrong.";
   }
 };
 
+// ------------------ ADD USER (ADMIN SIDE) ------------------
 export const addUser = async (prevState, formData) => {
   try {
     const { username, email, password, img, isAdmin } = Object.fromEntries(formData);
 
     await connectToDb();
 
-    // Check for existing user
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return { error: "Username already exists" };
     }
 
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Convert isAdmin string to boolean
     const adminFlag = isAdmin === "true";
 
-    // Create new user
     const newUser = new User({
       username,
       email,
@@ -140,10 +146,9 @@ export const addUser = async (prevState, formData) => {
     });
 
     await newUser.save();
+    console.log("Admin user saved ✅");
 
-    console.log("User saved to DB ✅");
     revalidatePath("/admin");
-
     return { success: true };
   } catch (error) {
     console.error("Add user error:", error);
@@ -151,18 +156,19 @@ export const addUser = async (prevState, formData) => {
   }
 };
 
-
-
+// ------------------ DELETE USER ------------------
 export const deleteUser = async (formData) => {
   const { id } = Object.fromEntries(formData);
 
   try {
-    connectToDb();
-    await Post.deleteMany({userId: id})
+    await connectToDb();
+
+    await Post.deleteMany({ userId: id });
     await User.findByIdAndDelete(id);
-    console.log("delete to db");
+
+    console.log("User and their posts deleted ✅");
     revalidatePath("/admin");
   } catch (err) {
-    console.log(err);
+    console.log("Delete user error:", err);
   }
 };
