@@ -23,7 +23,7 @@ export default function Home() {
 
           <p className="text-gray-300 text-lg md:text-xl leading-relaxed max-w-xl mx-auto md:mx-0 mb-10">
   Explore stories, insights, and practical guides on technology,
-  personal growth, and modern life. Whether you&apos;re a developer seeking
+  personal growth, and modern life. Whether you are a developer seeking
   fresh tips, a curious mind craving thoughtful perspectives, or just
   someone looking for daily inspiration — BlogWrite is your go-to
   place. Join a community that thrives on curiosity, creativity, and
