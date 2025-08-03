@@ -2,13 +2,15 @@ import { Post } from "@/lib/models";
 import { connectToDb } from "@/lib/utlis";
 import { NextResponse } from "next/server";
 
-export const GET = async (request) => {
+export const GET = async () => {
   try {
-    await connectToDb(); // ✅ Always await the DB connection
-    const posts = await Post.find(); // ✅ Call the function with ()
-    return NextResponse.json(posts); // ✅ Return the JSON response
+    await connectToDb();
+
+    const posts = await Post.find().sort({ createdAt: -1 }); // 👈 newest first
+
+    return NextResponse.json(posts);
   } catch (err) {
-    console.log("Error fetching posts:", err);
+    console.error("❌ Error fetching posts:", err.message);
     return NextResponse.json({ error: "Failed to fetch posts" }, { status: 500 });
   }
 };
