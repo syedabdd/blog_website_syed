@@ -70,7 +70,7 @@ export const handleLogout = async () => {
 
 // ------------------ REGISTER ------------------
 export const register = async (formData) => {
-  const { username, email, password, img, repassword } = formData; // ✅ Already plain object
+  const { username, email, password, repassword, img } = formData;
 
   if (!username || !email || !password || !repassword) {
     return "All fields are required";
@@ -88,6 +88,11 @@ export const register = async (formData) => {
       return "Username already exists";
     }
 
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) {
+      return "Email already in use";
+    }
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -99,12 +104,12 @@ export const register = async (formData) => {
     });
 
     await newUser.save();
-    console.log("User saved to DB ✅");
+    console.log("✅ User registered:", username);
 
     return "success";
   } catch (err) {
-    console.error("Register error:", err);
-    return "Something went wrong during registration.";
+    console.error("❌ Register error:", err.message, err.stack);
+    return "Something went wrong during registration: " + err.message;
   }
 };
 

@@ -21,7 +21,7 @@ function RegisterPage() {
       } else {
         setError(null)
         setSuccess('User registered successfully ✅')
-        e.target.reset() // Optional: clear the form
+        e.target.reset()
       }
     } catch (err) {
       setError(err.message || 'Something went wrong')
