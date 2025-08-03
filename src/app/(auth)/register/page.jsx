@@ -21,9 +21,10 @@ function RegisterPage() {
       } else {
         setError(null)
         setSuccess('User registered successfully ✅')
-        e.target.reset()
+        e.target.reset() // Optional: Reset form after success
       }
     } catch (err) {
+      console.error('Register error:', err)
       setError(err.message || 'Something went wrong')
       setSuccess(null)
     }
@@ -32,7 +33,7 @@ function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-black px-4">
       <form
-        onSubmit={registerUser}
+        onSubmit={registerUser} // ✅ Use onSubmit for client-side handling
         className="w-full max-w-md bg-[#111111] rounded-2xl shadow-2xl p-8 space-y-5 border border-orange-500"
       >
         <h2 className="text-2xl font-bold text-center text-orange-500">Create Account</h2>
