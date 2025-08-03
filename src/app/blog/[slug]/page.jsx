@@ -1,16 +1,27 @@
 import PostUser from "@/components/postuser/PostUser.jsx";
-import { getPost } from "@/lib/data";
-import Image from "next/image";
 import { Suspense } from "react";
+import Image from "next/image";
 
+// ✅ Fetch post using dynamic BASE URL
 const getData = async (slug) => {
-  const res = await fetch(`http://localhost:3000/api/blog/${slug}`);
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-  if (!res.ok) {
-    console.error("Error fetching post");
+  try {
+    const res = await fetch(`${baseUrl}/api/blog/${slug}`, {
+      cache: "no-store", // Avoid caching issues
+    });
+
+    if (!res.ok) {
+      console.error("Error fetching post");
+      return null;
+    }
+
+    return res.json();
+  } catch (err) {
+    console.error("❌ Failed to fetch post:", err);
     return null;
   }
-  return res.json();
 };
 
 export default async function SinglePostPage({ params }) {
@@ -28,19 +39,16 @@ export default async function SinglePostPage({ params }) {
   return (
     <section className="bg-black text-white px-6 py-20 min-h-screen">
       <div className="max-w-7xl mx-auto flex flex-col-reverse lg:flex-row gap-16 items-start">
-        
         {/* Right: Post Content */}
         <div className="flex-1 space-y-10">
-          {/* Title */}
           <h1 className="text-4xl md:text-5xl font-bold leading-tight text-white hover:text-[#ff6c03] transition-colors duration-300">
             {post.title}
           </h1>
 
-          {/* Author & Date */}
           <div className="flex items-center justify-between border-b border-white/10 pb-4">
             <div className="flex items-center gap-3">
               <Image
-                src={post.img}
+                src={post.img || "/default-user.png"}
                 alt="Author"
                 width={40}
                 height={40}
@@ -53,12 +61,11 @@ export default async function SinglePostPage({ params }) {
             <p className="text-sm text-gray-400 text-right">
               Published on <br />
               <span className="text-[#ff6c03]">
-                {post.createdAt?.toLocaleString?.().slice(0, 10) || "Unknown"}
+                {new Date(post.createdAt).toLocaleDateString("en-IN")}
               </span>
             </p>
           </div>
 
-          {/* Description */}
           <div className="prose prose-invert max-w-none text-gray-300 text-[1.1rem] leading-relaxed tracking-wide">
             {post.desc}
           </div>
