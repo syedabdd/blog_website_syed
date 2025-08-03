@@ -43,3 +43,4 @@ export const DELETE = async (req, { params }) => {
     return NextResponse.json({ error: "Failed to delete post" }, { status: 500 });
   }
 };
+

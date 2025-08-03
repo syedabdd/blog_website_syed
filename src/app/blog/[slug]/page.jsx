@@ -1,23 +1,22 @@
 import PostUser from "@/components/postuser/PostUser.jsx";
-import { getPost } from "@/lib/data";
 import Image from "next/image";
 import { Suspense } from "react";
 
+// Server-side fetch function
 const getData = async (slug) => {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const baseUrl =
+    typeof window === "undefined"
+      ? process.env.NEXTAUTH_URL || "http://localhost:3000"
+      : "";
+
   try {
     const res = await fetch(`${baseUrl}/api/blog/${slug}`, {
       cache: "no-store",
     });
 
-    if (!res.ok) {
-      console.error("Error fetching post");
-      return null;
-    }
-
+    if (!res.ok) return null;
     return res.json();
-  } catch (err) {
-    console.error("Fetch error:", err);
+  } catch {
     return null;
   }
 };
