@@ -1,15 +1,13 @@
 import PostUser from "@/components/postuser/PostUser.jsx";
-import { Suspense } from "react";
+import { getPost } from "@/lib/data";
 import Image from "next/image";
+import { Suspense } from "react";
 
-// ✅ Fetch post using dynamic BASE URL
 const getData = async (slug) => {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   try {
     const res = await fetch(`${baseUrl}/api/blog/${slug}`, {
-      cache: "no-store", // Avoid caching issues
+      cache: "no-store",
     });
 
     if (!res.ok) {
@@ -19,7 +17,7 @@ const getData = async (slug) => {
 
     return res.json();
   } catch (err) {
-    console.error("❌ Failed to fetch post:", err);
+    console.error("Fetch error:", err);
     return null;
   }
 };
@@ -47,13 +45,15 @@ export default async function SinglePostPage({ params }) {
 
           <div className="flex items-center justify-between border-b border-white/10 pb-4">
             <div className="flex items-center gap-3">
-              <Image
-                src={post.img || "/default-user.png"}
-                alt="Author"
-                width={40}
-                height={40}
-                className="rounded-full object-cover w-10 h-10 border border-[#ff6c03]/50"
-              />
+              {post.img && (
+                <Image
+                  src={post.img}
+                  alt="Author"
+                  width={40}
+                  height={40}
+                  className="rounded-full object-cover w-10 h-10 border border-[#ff6c03]/50"
+                />
+              )}
               <Suspense fallback={<p className="text-gray-400">Loading...</p>}>
                 <PostUser userId={post.userId} />
               </Suspense>
@@ -61,7 +61,7 @@ export default async function SinglePostPage({ params }) {
             <p className="text-sm text-gray-400 text-right">
               Published on <br />
               <span className="text-[#ff6c03]">
-                {new Date(post.createdAt).toLocaleDateString("en-IN")}
+                {new Date(post.createdAt).toLocaleDateString("en-IN") || "Unknown"}
               </span>
             </p>
           </div>
