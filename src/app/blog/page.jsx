@@ -3,6 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import Post from '@/components/postCard/Post';
 
 export default function BlogPage() {
@@ -12,20 +13,17 @@ export default function BlogPage() {
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [fetchError, setFetchError] = useState(null);
 
-  // Redirect unauthenticated users
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login');
     }
   }, [status, router]);
 
-  // Fetch posts
   useEffect(() => {
     const fetchPosts = async () => {
       if (status === 'authenticated') {
         try {
-          const res = await fetch('/api/blog'); // ✅ relative URL for both dev & prod
-
+          const res = await fetch('/api/blog');
           if (!res.ok) throw new Error('Failed to fetch posts');
           const data = await res.json();
           setPosts(data);
@@ -41,16 +39,14 @@ export default function BlogPage() {
     fetchPosts();
   }, [status]);
 
-  // Loading screen
   if (status === 'loading' || loadingPosts) {
     return (
-      <div className="flex justify-center items-center h-screen bg-black text-[#ff6c03]">
+      <div className="flex justify-center items-center h-screen bg-black text-[var(--accent)] animate-blink">
         Loading...
       </div>
     );
   }
 
-  // Optional: Error message
   if (fetchError) {
     return (
       <div className="flex justify-center items-center h-screen bg-black text-red-500">
@@ -61,21 +57,64 @@ export default function BlogPage() {
 
   if (!session) return null;
 
-  // Render posts
   return (
-    <div className="p-6 sm:p-10 bg-black min-h-screen text-white">
-      <h1 className="text-3xl font-bold text-[#ff6c03] mb-8 text-center">
+    <motion.div
+      className="p-6 sm:p-10 bg-[var(--bgSoft)] min-h-screen text-white"
+      initial="hidden"
+      animate="show"
+      variants={{
+        hidden: { opacity: 0 },
+        show: {
+          opacity: 1,
+          transition: {
+            staggerChildren: 0.15,
+          },
+        },
+      }}
+    >
+      <motion.h1
+        className="text-3xl font-bold text-[var(--accent)] mb-10 text-center"
+        initial={{ opacity: 0, y: -40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
         Latest Blog Posts
-      </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      </motion.h1>
+
+      <motion.div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+        variants={{
+          hidden: {},
+          show: {
+            transition: {
+              staggerChildren: 0.2,
+              delayChildren: 0.4,
+            },
+          },
+        }}
+      >
         {posts.length > 0 ? (
-          posts.map((post) => <Post key={post._id} post={post} />)
+          posts.map((post, index) => (
+            <motion.div
+              key={post._id}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <Post post={post} />
+            </motion.div>
+          ))
         ) : (
-          <p className="col-span-full text-center text-gray-400">
+          <motion.p
+            className="col-span-full text-center text-gray-400"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
             No blog posts found.
-          </p>
+          </motion.p>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
