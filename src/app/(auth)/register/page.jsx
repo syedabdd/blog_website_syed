@@ -6,9 +6,11 @@ import React, { useState } from 'react'
 function RegisterPage() {
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
+  const [loading, setLoading] = useState(false) // ✅
 
   const registerUser = async (e) => {
     e.preventDefault()
+    setLoading(true) // ✅ Start loading
 
     const formData = new FormData(e.target)
     const data = Object.fromEntries(formData)
@@ -21,19 +23,21 @@ function RegisterPage() {
       } else {
         setError(null)
         setSuccess('User registered successfully ✅')
-        e.target.reset() // Optional: Reset form after success
+        e.target.reset()
       }
     } catch (err) {
       console.error('Register error:', err)
       setError(err.message || 'Something went wrong')
       setSuccess(null)
+    } finally {
+      setLoading(false) // ✅ Stop loading
     }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black px-4">
       <form
-        onSubmit={registerUser} // ✅ Use onSubmit for client-side handling
+        onSubmit={registerUser}
         className="w-full max-w-md bg-[#111111] rounded-2xl shadow-2xl p-8 space-y-5 border border-orange-500"
       >
         <h2 className="text-2xl font-bold text-center text-orange-500">Create Account</h2>
@@ -79,9 +83,14 @@ function RegisterPage() {
 
         <button
           type="submit"
-          className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 rounded-lg transition duration-300"
+          disabled={loading}
+          className={`w-full font-semibold py-3 rounded-lg transition duration-300 ${
+            loading
+              ? 'bg-orange-400 cursor-not-allowed'
+              : 'bg-orange-600 hover:bg-orange-700 text-white'
+          }`}
         >
-          Register here
+          {loading ? 'Registering...' : 'Register here'}
         </button>
       </form>
     </div>

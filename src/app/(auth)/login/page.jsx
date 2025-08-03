@@ -14,9 +14,12 @@ const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false); // ✅
 
   const handleCredentialLogin = async (e) => {
     e.preventDefault();
+    setLoading(true); // ✅ Start loader
+    setErrorMsg('');
 
     const res = await signIn('credentials', {
       username,
@@ -26,6 +29,7 @@ const LoginPage = () => {
 
     if (res?.error) {
       setErrorMsg('Invalid username or password');
+      setLoading(false); // ✅ Stop loader on error
     } else {
       router.push('/'); // or your protected route
     }
@@ -69,10 +73,7 @@ const LoginPage = () => {
             </div>
 
             {/* Credential Form */}
-            <form
-              onSubmit={handleCredentialLogin}
-              className="space-y-4 text-left"
-            >
+            <form onSubmit={handleCredentialLogin} className="space-y-4 text-left">
               <input
                 type="text"
                 placeholder="Username"
@@ -97,9 +98,14 @@ const LoginPage = () => {
 
               <button
                 type="submit"
-                className="w-full cursor-pointer bg-[#ff6c03] hover:bg-black text-white font-semibold py-3 rounded-md transition duration-300"
+                disabled={loading}
+                className={`w-full font-semibold py-3 rounded-md transition duration-300 ${
+                  loading
+                    ? 'bg-[#ff6c03]/60 cursor-not-allowed'
+                    : 'bg-[#ff6c03] hover:bg-black'
+                } text-white`}
               >
-                Login with Credentials
+                {loading ? 'Logging in...' : 'Login with Credentials'}
               </button>
             </form>
 

@@ -70,7 +70,7 @@ export default function ContactPage() {
         <motion.div className="flex-1 w-full" variants={item}>
           <motion.form
             onSubmit={handleSubmit}
-            className="space-y-6 p-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl"
+            className="space-y-6 p-4 md:p-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl"
             variants={item}
           >
             <motion.h2 className="text-3xl font-bold text-[var(--accent)]" variants={item}>
