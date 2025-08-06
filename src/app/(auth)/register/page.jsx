@@ -6,14 +6,22 @@ import React, { useState } from 'react'
 function RegisterPage() {
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
-  const [loading, setLoading] = useState(false) // ✅
+  const [loading, setLoading] = useState(false)
 
   const registerUser = async (e) => {
     e.preventDefault()
-    setLoading(true) // ✅ Start loading
+    setLoading(true)
 
     const formData = new FormData(e.target)
     const data = Object.fromEntries(formData)
+
+    // ✅ Check if passwords match before calling API
+    if (data.password !== data.repassword) {
+      setError('Passwords do not match ❌')
+      setSuccess(null)
+      setLoading(false)
+      return
+    }
 
     try {
       const res = await register(data)
@@ -30,7 +38,7 @@ function RegisterPage() {
       setError(err.message || 'Something went wrong')
       setSuccess(null)
     } finally {
-      setLoading(false) // ✅ Stop loading
+      setLoading(false)
     }
   }
 
